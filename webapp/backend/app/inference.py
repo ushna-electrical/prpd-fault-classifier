@@ -15,6 +15,15 @@ CODE_ROOT = Path(__file__).resolve().parents[3]  # app/ -> backend/ -> webapp/ -
 if str(CODE_ROOT) not in sys.path:
     sys.path.insert(0, str(CODE_ROOT))
 
+import torch  # noqa: E402
+
+# This service only ever runs CPU inference at batch size 1 -- extra intra-op
+# threads buy nothing here but each carries its own memory arenas, which
+# matters on a RAM-capped host (e.g. Render's free 512MB tier). Set before any
+# model loads. OMP_NUM_THREADS/MKL_NUM_THREADS (set in render.yaml) cover the
+# BLAS libraries underneath; this covers torch's own thread pool.
+torch.set_num_threads(1)
+
 from test_model import FinalModel  # noqa: E402
 
 # Display label per class code. fault_2 absorbs the merged fault_3 label: the

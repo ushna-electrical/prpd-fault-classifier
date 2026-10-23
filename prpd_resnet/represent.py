@@ -40,9 +40,10 @@ def _build_lookup() -> np.ndarray:
         centres = (np.arange(_LEVELS) << _SHIFT) + (1 << (_SHIFT - 1))
         grid = np.stack(np.meshgrid(centres, centres, centres, indexing="ij"), axis=-1).reshape(-1, 3).astype(np.float32)
         out = np.empty(grid.shape[0], dtype=np.uint8)
-        for start in range(0, grid.shape[0], 16384):  # chunked to bound memory
-            chunk = grid[start : start + 16384]
-            out[start : start + 16384] = ((chunk[:, None, :] - _VIRIDIS_LUT[None, :, :]) ** 2).sum(axis=2).argmin(axis=1)
+        chunk_size = 4096  # bounds peak memory during this one-time build; smaller = less peak RAM, more iterations
+        for start in range(0, grid.shape[0], chunk_size):
+            chunk = grid[start : start + chunk_size]
+            out[start : start + chunk_size] = ((chunk[:, None, :] - _VIRIDIS_LUT[None, :, :]) ** 2).sum(axis=2).argmin(axis=1)
         _RGB_TO_INTENSITY = out
     return _RGB_TO_INTENSITY
 

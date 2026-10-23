@@ -11,4 +11,12 @@ services:
         value: 3.12.10
       - key: PRPD_CORS_ORIGINS
         sync: false  # set in the Render dashboard to your Vercel/Netlify URL(s)
+      # Constrains PyTorch's CPU thread pools (each thread carries its own
+      # memory arenas). On a RAM-capped instance (Render free tier: 512MB)
+      # this measurably lowers peak memory for little to no latency cost at
+      # batch size 1, which is all this service ever does.
+      - key: OMP_NUM_THREADS
+        value: "1"
+      - key: MKL_NUM_THREADS
+        value: "1"
     healthCheckPath: /api/health
