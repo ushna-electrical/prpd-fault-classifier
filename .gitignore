@@ -1,0 +1,51 @@
+# Allowlist .gitignore: everything in this folder is ignored by default, and
+# only what the deployed web tool actually needs to run is explicitly
+# un-ignored below. This keeps the training/research tree (raw dataset
+# references, caches, experiment outputs, GAN runs, drafts) out of the repo
+# entirely -- see webapp/DEPLOYMENT.md for why.
+/*
+
+# ---------------------------------------------------------------- web tool
+!/webapp/
+
+# ---------------------------------------------------------------- inference code the backend imports
+!/test_model.py
+!/prpd_fewshot/
+!/prpd_resnet/
+!/prpd_classifier/
+!/prpd_calibration/
+
+# ---------------------------------------------------------------- inference data the backend reads
+!/voltage_ranges.json
+!/final_model_sensor1_10class/
+!/final_model_sensor2_10class/
+!/final_model_sensor3_10class/
+
+# stage2_output/ also holds many large training-experiment artifacts that
+# aren't needed at runtime -- only the dashboard's specific source files are kept.
+!/stage2_output/
+/stage2_output/*
+!/stage2_output/sensor_comparison_10class.csv
+!/stage2_output/calibration_sensor_2.json
+!/stage2_output/calibration_operating_points_sensor_2.csv
+!/stage2_output/calibration_probs_sensor_2.npz
+!/stage2_output/ensemble_confusion_matrix_sensor2_merged23_10class_counts.csv
+!/stage2_output/ensemble_confusion_matrix_sensor2_merged23_10class_row_percent.csv
+!/stage2_output/ensemble_confusion_matrix_sensor2_merged23_10class_per_class_report.csv
+!/stage2_output/ensemble_confusion_matrix_sensor2_merged23_10class.png
+
+# ---------------------------------------------------------------- misc
+!/README.md
+!/.gitignore
+!/.vscode/
+!/render.yaml
+!/netlify.toml
+
+# ---------------------------------------------------------------- always ignore, even inside the above
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.log
+.DS_Store
+._*

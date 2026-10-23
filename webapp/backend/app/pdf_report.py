@@ -1,0 +1,155 @@
+"""One-click PDF report for a single classification: image, prediction,
+confidence, flag, model name. No dates anywhere, as specified.
+"""
+
+from __future__ import annotations
+
+import io
+
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
+from reportlab.lib.utils import ImageReader
+from reportlab.pdfgen import canvas
+
+PAGE_W, PAGE_H = A4
+MARGIN = 20 * mm
+
+TIER_COLORS = {
+    "accept": colors.HexColor("#1f8a4c"),
+    "review": colors.HexColor("#b5690a"),
+    "manual": colors.HexColor("#c23030"),
+}
+
+
+def _wrap_text(c: canvas.Canvas, text: str, font: str, size: int, max_width: float) -> list[str]:
+    words = text.split(" ")
+    lines: list[str] = []
+    current = ""
+    for word in words:
+        candidate = (current + " " + word).strip()
+        if c.stringWidth(candidate, font, size) <= max_width:
+            current = candidate
+        else:
+            if current:
+                lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines
+
+
+def build_report(image_bytes: bytes, result: dict, model_name: str) -> bytes:
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf, pagesize=A4)
+
+    y = PAGE_H - MARGIN
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(MARGIN, y, "PRPD Classification Report")
+    y -= 9 * mm
+
+    c.setFont("Helvetica", 10)
+    c.setFillColor(colors.HexColor("#576170"))
+    c.drawString(MARGIN, y, model_name)
+    y -= 10 * mm
+    c.setFillColor(colors.black)
+
+    # ---- image, scaled to fit a fixed box ------------------------------
+    img = ImageReader(io.BytesIO(image_bytes))
+    iw, ih = img.getSize()
+    box_w, box_h = PAGE_W - 2 * MARGIN, 85 * mm
+    scale = min(box_w / iw, box_h / ih)
+    draw_w, draw_h = iw * scale, ih * scale
+    c.rect(MARGIN, y - box_h, box_w, box_h, stroke=1, fill=0)
+    c.drawImage(
+        img,
+        MARGIN + (box_w - draw_w) / 2,
+        y - box_h + (box_h - draw_h) / 2,
+        width=draw_w,
+        height=draw_h,
+        preserveAspectRatio=True,
+        mask="auto",
+    )
+    y -= box_h + 12 * mm
+
+    # ---- prediction + confidence flag ----------------------------------
+    c.setFont("Helvetica-Bold", 20)
+    c.drawString(MARGIN, y, result["fault_display"])
+
+    tier = result["confidence_tier"]["tier"]
+    flag_color = TIER_COLORS.get(tier, colors.black)
+    flag_text = f'{result["confidence_tier"]["label"]} — {result["confidence"] * 100:.1f}%'
+    c.setFont("Helvetica-Bold", 12)
+    c.setFillColor(flag_color)
+    c.drawRightString(PAGE_W - MARGIN, y - 1 * mm, flag_text)
+    c.setFillColor(colors.black)
+    y -= 12 * mm
+
+    if not result.get("size_matches_training", True):
+        c.setFont("Helvetica-Bold", 9)
+        c.setFillColor(colors.HexColor("#c23030"))
+        c.drawString(MARGIN, y, "WARNING: image size does not match the training layout -- this result is not trustworthy.")
+        c.setFillColor(colors.black)
+        y -= 7 * mm
+
+    # ---- top candidates ---------------------------------------------------
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(MARGIN, y, "Top candidates")
+    y -= 6 * mm
+    c.setFont("Helvetica", 10)
+    for entry in result["top"]:
+        c.drawString(MARGIN + 4 * mm, y, entry["fault_display"])
+        c.drawRightString(MARGIN + 60 * mm, y, f'{entry["probability"] * 100:.1f}%')
+        y -= 5.5 * mm
+    y -= 4 * mm
+
+    # ---- model agreement ----------------------------------------------
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(MARGIN, y, "Component models")
+    y -= 6 * mm
+    c.setFont("Helvetica", 10)
+    c.drawString(
+        MARGIN + 4 * mm, y,
+        f'Prototypical network: {result["prototypical"]["fault"]} ({result["prototypical"]["probability"] * 100:.1f}%)'
+    )
+    y -= 5.5 * mm
+    c.drawString(
+        MARGIN + 4 * mm, y,
+        f'ResNet-18: {result["resnet18"]["fault"]} ({result["resnet18"]["probability"] * 100:.1f}%)'
+    )
+    y -= 5.5 * mm
+    c.drawString(MARGIN + 4 * mm, y, "Agree" if result["models_agree"] else "Disagree — treat with extra caution")
+    y -= 9 * mm
+
+    # ---- voltage tie-break, if used ------------------------------------
+    if result.get("voltage_check"):
+        vc = result["voltage_check"]
+        c.setFont("Helvetica-Bold", 11)
+        c.drawString(MARGIN, y, "Voltage check")
+        y -= 6 * mm
+        c.setFont("Helvetica", 10)
+        c.drawString(MARGIN + 4 * mm, y, f'Voltage: {vc["voltage"]:g} kV')
+        y -= 5.5 * mm
+        c.drawString(MARGIN + 4 * mm, y, vc["action"])
+        y -= 5.5 * mm
+        c.setFont("Helvetica-Bold", 10)
+        c.drawString(MARGIN + 4 * mm, y, f'Final: {result["final_fault_display"]}')
+        y -= 9 * mm
+
+    # ---- footer (wrapped to the page width) -------------------------------
+    footer_text = (
+        "Confidence bands were measured on the thesis's held-out test split; an independent set of "
+        "recordings would be needed to confirm them (thesis ch. 9). Generated by the PRPD Fault Classifier field tool."
+    )
+    c.setFont("Helvetica-Oblique", 8)
+    c.setFillColor(colors.HexColor("#576170"))
+    max_width = PAGE_W - 2 * MARGIN
+    lines = _wrap_text(c, footer_text, "Helvetica-Oblique", 8, max_width)
+    footer_y = MARGIN + (len(lines) - 1) * 3.6 * mm
+    for line in lines:
+        c.drawString(MARGIN, footer_y, line)
+        footer_y -= 3.6 * mm
+
+    c.showPage()
+    c.save()
+    return buf.getvalue()

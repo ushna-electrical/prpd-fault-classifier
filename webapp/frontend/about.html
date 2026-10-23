@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About &mdash; PRPD Fault Classifier</title>
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/about.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="app-header">
+    <div class="brand">
+      <span>PRPD Fault Classifier</span>
+      <span class="subtitle">AI Image Classification for PRPD Faults</span>
+    </div>
+    <nav class="app-nav" aria-label="Main">
+      <a href="index.html">Classify</a>
+      <a href="library.html">Fault Library</a>
+      <a href="dashboard.html">Results Dashboard</a>
+      <a href="about.html" aria-current="page">About</a>
+    </nav>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode">
+      <span class="theme-toggle-icon" aria-hidden="true">&#9789;</span>
+      <span class="theme-toggle-text">Dark mode</span>
+    </button>
+  </header>
+
+  <main id="main-content">
+    <h1 class="page-title">About</h1>
+
+    <!-- ------------------------------------------------ summary -->
+    <section class="card about-section" aria-labelledby="summary-heading">
+      <h2 id="summary-heading">Project summary</h2>
+      <p>
+        Early detection of partial discharge (PD), which indicates degradation of the insulation in medium-voltage
+        (MV) cable systems, provides an opportunity to detect faults developing before they cause total system
+        failure. Cable joints and terminations have a higher sensitivity to PD than the rest of the cable system due
+        to being constructed in the field by workers, rather than in a factory. The quality of the worker's
+        construction will affect the sensitivity. In addition, defects that may contribute to PD in electrical
+        equipment include poor grounding connections, voids or air bubbles between the various components used to
+        form the joint or termination, and/or contaminants on the surfaces of components prior to assembly. However,
+        these defects cannot be identified by analyzing the PD patterns.
+      </p>
+      <p>
+        This thesis studies how these installation defects appear in phase-resolved partial discharge (PRPD)
+        patterns measured on real MV cable joints and terminations, with the goal of building an image-based dataset
+        for AI-based fault classification. Measurements were taken with a BSS PDM-600 PD monitoring system using
+        three channels: a UHF antenna (343&nbsp;MHz&ndash;3&nbsp;GHz) and two IEC-compliant channels, one with a
+        high-frequency current transformer (HFCT, 1&ndash;52&nbsp;MHz bandwidth) and one with a coupling capacitor.
+        A reference measurement was recorded under healthy, de-energized conditions before each fault was
+        introduced, tested, and reversed.
+      </p>
+      <p class="about-source">Source: thesis Abstract (chapters/00_abstract.tex)</p>
+    </section>
+
+    <!-- ------------------------------------------------ objectives -->
+    <section class="card about-section" aria-labelledby="objectives-heading">
+      <h2 id="objectives-heading">Research objectives</h2>
+      <p>The work is organised around six objectives:</p>
+      <ol class="objectives-list">
+        <li>To measure the PRPD patterns of defects created in a laboratory on MV cable joints and terminations,
+          using a three-channel monitoring system with one UHF antenna and two IEC channels (one HFCT and one
+          coupling capacitor), and to compare every fault with a reference measurement on the same cable.</li>
+        <li>To build a labelled PRPD image dataset of the fault classes and three sensing channels, screened for
+          images that contain only the noise floor and split by recording session so that no recording appears in
+          more than one of the training, validation and test sets.</li>
+        <li>To establish a transfer-learning baseline with MobileNetV3-Large and to test whether a CNN can recognise
+          the fault type from a PRPD image clearly better than chance, using only image transformations that are
+          physically meaningful for the phase-resolved representation.</li>
+        <li>To compare approaches for the small and imbalanced classes (GAN-based synthetic images, few-shot metric
+          learning and a supervised ResNet-18 working on the recovered PRPD matrix, individually and as an
+          ensemble) and to quantify their effect on each fault class.</li>
+        <li>To determine, fault by fault, which of the three sensing channels gives the most reliable classifier,
+          instead of fixing one channel in advance.</li>
+        <li>To calibrate the output probabilities of the selected classifier so that its reported confidence matches
+          the observed frequency of correct predictions.</li>
+      </ol>
+      <p class="about-source">Source: thesis &sect;1.3 &ldquo;Research Objectives&rdquo; (chapters/01_introduction.tex)</p>
+    </section>
+
+    <!-- ------------------------------------------------ method overview -->
+    <section class="card about-section" aria-labelledby="method-heading">
+      <h2 id="method-heading">Model and method overview</h2>
+      <p>
+        The work is organised as a chain of steps in which each step produces the input of the next. The recordings
+        are first converted into a screened, session-split image dataset. A transfer-learning baseline then shows
+        how far standard methods get on this data. Because the dataset is small and imbalanced, three further
+        approaches are examined: synthetic images from a class-conditional GAN, few-shot metric learning, and a
+        ResNet-18 working on the PRPD matrix recovered from the image, which is finally combined with the few-shot
+        model in an ensemble. The three sensing channels are then compared, and the confidence values of the
+        selected model are checked for calibration.
+      </p>
+      <p>The main contributions are:</p>
+      <ul class="contributions-list">
+        <li>a documented laboratory campaign of twelve fault classes on MV cable joints and terminations, created as
+          reversible, artificial defects that correspond to errors that can also occur in service, recorded
+          simultaneously on a UHF channel and two IEC channels, with each fault compared against a reference on the
+          same cable;</li>
+        <li>a set of 1,387 measurement files and a PRPD image dataset of 11,083 images formed from 1,195 of them,
+          together with a slicing tool that converts the recordings into images and an automated image-quality
+          audit that removed 4,453 images showing nothing but the noise floor, leaving 6,630 images from 424
+          recording sessions;</li>
+        <li>a leakage-safe evaluation protocol in which whole recording sessions, never individual images, are
+          assigned to training, validation and test sets;</li>
+        <li>a systematic comparison of transfer learning, class weighting, Siamese and prototypical few-shot
+          learning, a CAE-ACGAN generator, a ResNet-18 working on the recovered PRPD matrix and an ensemble of the
+          two best models; on the extended Sensor-2 dataset the ensemble reaches a test macro-F1 of 0.884 over
+          twelve labels;</li>
+        <li>a fault-level analysis of defects which are similar to other categories and remain confusable
+          (especially termination-surface grounding faults versus air gaps at the cable-head interface), interpreted
+          as a physical finding about pattern similarity rather than as a modelling defect.</li>
+      </ul>
+      <p class="about-source">Source: thesis &sect;1.4 &ldquo;Approach and Contributions&rdquo; (chapters/01_introduction.tex)</p>
+    </section>
+
+    <!-- ------------------------------------------------ limitations -->
+    <section class="card about-section" aria-labelledby="limitations-heading">
+      <h2 id="limitations-heading">Limitations</h2>
+      <dl class="limitations-list">
+        <div><dt>Effective sample size.</dt><dd>The image dataset has 424 retained sessions (378 on Sensor 2), and
+          F1 and F5i have only four and five. On Sensor 2 the test sets of F1 and F5i contain a single session each,
+          and those of F10, F12 and F13 four to five. Per-class results for the smallest classes rest on one
+          recording and can change strongly with a different split. F14 is not yet part of the image dataset.</dd></div>
+        <div><dt>Calibration era.</dt><dd>The HFCT calibration changed during the campaign, and the fault classes
+          are almost perfectly confounded with the calibration era. A classifier could exploit the amplitude scale,
+          particularly for F3 and F1.</dd></div>
+        <div><dt>Cable confound.</dt><dd>Several classes were recorded on a single cable (F1, F4, F5i, F8 and F9 on
+          Cable 01). Cable-specific background patterns may contribute to their recognition or confusion; cable
+          identity was deliberately not modelled.</dd></div>
+        <div><dt>Channel labelling.</dt><dd>The measurement log notes several recordings in which Sensors 2 and 3
+          were switched. If these files were not corrected, some images carry the wrong channel label.</dd></div>
+        <div><dt>Rendered images.</dt><dd>The classifiers work on rendered PNG plots with a per-image logarithmic
+          colour scale, not on raw event data. Absolute counts cannot be recovered, and the rendering itself is part
+          of the model input.</dd></div>
+        <div><dt>Pooled baseline manifest.</dt><dd>The pooled MobileNetV3-Large baseline was run on the manifest
+          version before the quality audit, so its numbers are not strictly comparable with the Sensor-2
+          results.</dd></div>
+        <div><dt>Duplicated F4 images.</dt><dd>In the extended Sensor-2 split, all F4 validation and test images are
+          copies of training images. The F4 score on this split is not a held-out estimate, and the macro-F1 without
+          F4 (0.875 for the ensemble) is the more reliable figure until the split is regenerated without the
+          copies.</dd></div>
+        <div><dt>Two datasets.</dt><dd>Model development and the ablation study used the initial Sensor-2 dataset,
+          the final evaluation the extended one. Results of the two are not directly comparable, because the test
+          sets differ.</dd></div>
+        <div><dt>Statistical evidence.</dt><dd>The advantage of session-disjoint episodes is consistent in direction
+          but not significant with three seeds (p&nbsp;=&nbsp;0.10).</dd></div>
+        <div><dt>Per-sensor models and confidence bands.</dt><dd>The Sensor-1 and Sensor-3 models were trained with
+          a single seed, and several Sensor-1 test sets contain only one to five images, so their per-class values
+          are not reliable on their own. The accuracies of the confidence bands of the field tool were measured on
+          the same test split as all other results and need confirmation on independent recordings.</dd></div>
+        <div><dt>Laboratory data.</dt><dd>All defects are artificial and reversible, created on four cable samples
+          in one laboratory. Laboratory accuracy does not transfer automatically to field data.</dd></div>
+      </dl>
+      <p class="about-source">Source: thesis &sect;10.5 &ldquo;Threats to Validity&rdquo; (chapters/10_results.tex)</p>
+    </section>
+
+    <section class="card about-section" aria-labelledby="tool-heading">
+      <h2 id="tool-heading">Why this tool exists</h2>
+      <p>
+        This tool turns the thesis's trained models into something you can actually use: upload a PRPD plot and get
+        a predicted fault, a confidence score, and a plain-language read on how much to trust it. It's built around
+        the Coupling Capacitor ensemble &mdash; a prototypical network plus a ResNet-18 &mdash; the best-performing
+        of the three channels, covering the ten fault classes all three share.
+      </p>
+      <p>
+        It isn't part of the thesis itself. It simply packages the thesis's trained models, calibration results and
+        fault taxonomy into something clickable: a classify page, a fault library, a results dashboard, and a
+        one-click PDF report. And like the thesis, it only ever answers with one of those ten classes &mdash; it
+        doesn't try to flag images of conditions outside that scope.
+      </p>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    PRPD Fault Classifier &mdash; built from the thesis &ldquo;AI Image Classification for PRPD Faults&rdquo;.
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/theme.js"></script>
+</body>
+</html>

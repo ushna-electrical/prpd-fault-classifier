@@ -1,0 +1,67 @@
+# Example Nginx server block for prpd.yourdomain.com (adjust the subdomain,
+# paths and cert names). Copy to /etc/nginx/sites-available/prpd.conf, symlink
+# into sites-enabled, then `nginx -t && systemctl reload nginx`.
+#
+# Recommended layout: Nginx serves the static frontend directly (fast, no
+# Python involved) and reverse-proxies only /api/ to the FastAPI service
+# (prpd-backend.service, listening on 127.0.0.1:8000, not exposed externally).
+#
+# Run certbot first to get the TLS cert and have it rewrite this file's
+# listen/ssl_certificate lines for you:
+#   sudo certbot --nginx -d prpd.yourdomain.com
+
+server {
+    listen 80;
+    server_name prpd.yourdomain.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name prpd.yourdomain.com;
+
+    ssl_certificate     /etc/letsencrypt/live/prpd.yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/prpd.yourdomain.com/privkey.pem;
+
+    # Matches the backend's own 15 MB upload limit (MAX_UPLOAD_BYTES in
+    # app/main.py) -- Nginx's own default is 1 MB and would reject larger
+    # PRPD images before they even reach the backend.
+    client_max_body_size 16m;
+
+    # Optional but recommended if this subdomain shouldn't be public: prompt
+    # for a username/password before anything is served.
+    #   sudo apt install apache2-utils
+    #   sudo htpasswd -c /etc/nginx/.htpasswd-prpd <username>
+    # auth_basic "PRPD Fault Classifier";
+    # auth_basic_user_file /etc/nginx/.htpasswd-prpd;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location / {
+        root /opt/prpd/Code/webapp/frontend;
+        index index.html;
+        try_files $uri $uri.html =404;
+    }
+}
+
+# --- Alternative: single-process mode -------------------------------------
+# If PRPD_SERVE_FRONTEND=1 is set for the backend service instead (FastAPI
+# serves the frontend itself), replace the two `location` blocks above with
+# just:
+#
+#   location / {
+#       proxy_pass http://127.0.0.1:8000;
+#       proxy_set_header Host $host;
+#       proxy_set_header X-Real-IP $remote_addr;
+#       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#       proxy_set_header X-Forwarded-Proto $scheme;
+#   }
+#
+# and set the frontend's js/config.js API_BASE_URL to "" either way, since
+# everything is then same-origin.

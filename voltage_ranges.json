@@ -1,0 +1,62 @@
+{
+  "source": "metadata.xlsx",
+  "unit": "kV",
+  "ranges": {
+    "fault_2": {
+      "min_kv": 1.795,
+      "max_kv": 6.369,
+      "n": 28
+    },
+    "fault_4": {
+      "min_kv": 1.812,
+      "max_kv": 5.377,
+      "n": 13
+    },
+    "fault_5": {
+      "min_kv": 11.65,
+      "max_kv": 18.5,
+      "n": 11
+    },
+    "fault_6": {
+      "min_kv": 17.38,
+      "max_kv": 24.62,
+      "n": 44
+    },
+    "fault_7": {
+      "min_kv": 3.813,
+      "max_kv": 10.28,
+      "n": 51
+    },
+    "fault_8": {
+      "min_kv": 2.278,
+      "max_kv": 7.75,
+      "n": 14
+    },
+    "fault_9": {
+      "min_kv": 4.312,
+      "max_kv": 7.357,
+      "n": 17
+    },
+    "fault_10": {
+      "min_kv": 1.85,
+      "max_kv": 7.885,
+      "n": 31
+    },
+    "fault_12": {
+      "min_kv": 14.62,
+      "max_kv": 24.34,
+      "n": 19
+    },
+    "fault_13": {
+      "min_kv": 7.43,
+      "max_kv": 22.92,
+      "n": 33
+    }
+  },
+  "notes": [
+    "row 49: fault_4 pdiv 1900 treated as volts -> 1.9 kV",
+    "row 50: fault_4 pdiv 2274 treated as volts -> 2.274 kV",
+    "row 68: fault_9 pdiv 4882 treated as volts -> 4.882 kV",
+    "row 80: fault_9 pdiv 7273 treated as volts -> 7.273 kV"
+  ]
+}

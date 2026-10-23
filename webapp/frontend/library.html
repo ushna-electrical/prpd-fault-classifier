@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fault Library &mdash; PRPD Fault Classifier</title>
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/library.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="app-header">
+    <div class="brand">
+      <span>PRPD Fault Classifier</span>
+      <span class="subtitle">AI Image Classification for PRPD Faults</span>
+    </div>
+    <nav class="app-nav" aria-label="Main">
+      <a href="index.html">Classify</a>
+      <a href="library.html" aria-current="page">Fault Library</a>
+      <a href="dashboard.html">Results Dashboard</a>
+      <a href="about.html">About</a>
+    </nav>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode">
+      <span class="theme-toggle-icon" aria-hidden="true">&#9789;</span>
+      <span class="theme-toggle-text">Dark mode</span>
+    </button>
+  </header>
+
+  <main id="main-content">
+    <h1 class="page-title">Fault Library</h1>
+    <p class="page-subtitle">
+      The ten fault classes the Coupling Capacitor model can predict. Descriptions and example images are taken from the thesis
+      (Table 4.3 and the per-fault sections of chapter&nbsp;4).
+    </p>
+
+    <div class="library-grid">
+      <!-- -------------------------------------------------- class list -->
+      <nav class="card library-list" aria-label="Fault classes">
+        <ul id="fault-list"></ul>
+      </nav>
+
+      <!-- -------------------------------------------------- detail pane -->
+      <section class="card library-detail" id="library-detail" aria-live="polite">
+        <!-- filled by library.js -->
+      </section>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    PRPD Fault Classifier &mdash; built from the thesis &ldquo;AI Image Classification for PRPD Faults&rdquo;.
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/library-data.js"></script>
+  <script src="js/library.js"></script>
+</body>
+</html>

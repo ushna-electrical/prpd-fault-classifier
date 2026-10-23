@@ -1,0 +1,11 @@
+# Netlify deploy config (alternative to Vercel -- webapp/frontend/vercel.json
+# covers that path; this one's for Netlify instead, not in addition).
+# Point a new Netlify site at this repo and it needs no other configuration.
+
+[build]
+  base = "webapp/frontend"
+  publish = "."
+
+[build.environment]
+  # Static HTML/CSS/JS, no build step.
+  NODE_VERSION = "20"

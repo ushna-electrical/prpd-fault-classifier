@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Classify &mdash; PRPD Fault Classifier</title>
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/classify.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="app-header">
+    <div class="brand">
+      <span>PRPD Fault Classifier</span>
+      <span class="subtitle">AI Image Classification for PRPD Faults</span>
+    </div>
+    <nav class="app-nav" aria-label="Main">
+      <a href="index.html" aria-current="page">Classify</a>
+      <a href="library.html">Fault Library</a>
+      <a href="dashboard.html">Results Dashboard</a>
+      <a href="about.html">About</a>
+    </nav>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode">
+      <span class="theme-toggle-icon" aria-hidden="true">&#9789;</span>
+      <span class="theme-toggle-text">Dark mode</span>
+    </button>
+  </header>
+
+  <main id="main-content">
+    <h1 class="page-title">Classify a PRPD image</h1>
+    <p class="page-subtitle">
+      Upload a phase-resolved partial discharge heatmap rendered at 1800&times;1050&nbsp;px.
+    </p>
+
+    <div class="classify-grid">
+      <!-- -------------------------------------------------- upload pane -->
+      <section class="card" aria-labelledby="upload-heading">
+        <h2 id="upload-heading">Upload</h2>
+
+        <div class="field">
+          <label for="sensor-select">Sensor</label>
+          <select id="sensor-select">
+            <option value="2" selected>Coupling Capacitor (IEC Ch2) &mdash; recommended</option>
+            <option value="1">UHF Antenna (Ch1)</option>
+            <option value="3">HFCT (IEC Ch3)</option>
+          </select>
+          <p class="hint">Each sensor has its own model. Use the model matching the sensor that recorded the image.</p>
+        </div>
+
+        <div class="field">
+          <label id="dropzone-label" for="file-input">PRPD image</label>
+          <div
+            class="dropzone"
+            id="dropzone"
+            role="button"
+            tabindex="0"
+            aria-label="Upload PRPD image: drag and drop a file here, or press Enter to browse"
+            aria-describedby="dropzone-hint"
+          >
+            <span class="dz-icon" aria-hidden="true">&#128193;</span>
+            <span>Drag and drop a PNG/JPG here, or click to browse</span>
+            <div class="dz-filename" id="dz-filename"></div>
+          </div>
+          <input
+            type="file"
+            id="file-input"
+            accept="image/png,image/jpeg"
+            class="visually-hidden"
+            aria-labelledby="dropzone-label"
+          />
+          <p class="hint" id="dropzone-hint">PNG or JPG, up to 15&nbsp;MB. The plot must use the same layout as training (1800&times;1050&nbsp;px).</p>
+        </div>
+
+        <div class="preview-wrap" id="preview-wrap" hidden>
+          <img id="preview-img" alt="Preview of the uploaded PRPD image" />
+        </div>
+
+        <button type="button" class="btn btn-block" id="classify-btn" disabled style="margin-top:16px;">
+          Classify
+        </button>
+
+        <div class="status-line" id="status-line" role="status" aria-live="polite"></div>
+        <div id="error-region"></div>
+      </section>
+
+      <!-- -------------------------------------------------- results pane -->
+      <section class="card" aria-labelledby="results-heading">
+        <h2 id="results-heading">Results</h2>
+        <div id="results-content">
+          <p class="results-placeholder">Upload an image and click Classify to see the predicted fault, confidence, and top candidates here.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/classify.js"></script>
+</body>
+</html>

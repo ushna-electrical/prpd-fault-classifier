@@ -1,0 +1,28 @@
+[Unit]
+Description=PRPD Fault Classifier backend (FastAPI/uvicorn)
+After=network.target
+
+[Service]
+# Adjust these two paths to where you cloned/uploaded the repo on the VPS.
+# WorkingDirectory must be webapp/backend/ so `app.main:app` resolves and the
+# relative CODE_ROOT (Code/, three parents up from app/inference.py) is correct.
+WorkingDirectory=/opt/prpd/Code/webapp/backend
+ExecStart=/opt/prpd/Code/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+
+# One place to set all deployment config (see Code/webapp/DEPLOYMENT.md for
+# the full list). Keep this file out of version control; it typically holds
+# nothing secret here, but PRPD_CORS_ORIGINS should match your real domain(s).
+EnvironmentFile=/opt/prpd/prpd-backend.env
+
+Restart=on-failure
+RestartSec=3
+User=prpd
+Group=prpd
+
+# Hardening (optional but recommended): the service only needs to read the
+# repo and write temp files.
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

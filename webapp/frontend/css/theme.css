@@ -1,0 +1,361 @@
+/* PRPD Fault Classifier -- shared theme and layout.
+   Light by default; dark via prefers-color-scheme or the manual toggle
+   (data-theme attribute on <html>, persisted in localStorage by theme.js). */
+
+:root {
+  --color-bg: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-surface-alt: #eef1f6;
+  --color-border: #d4dae3;
+  --color-text: #1b2430;
+  --color-text-muted: #576170;
+  --color-accent: #0b5fa5;
+  --color-accent-contrast: #ffffff;
+  --color-focus: #0b5fa5;
+
+  --color-accept-bg: #e4f6ea;
+  --color-accept-border: #1f8a4c;
+  --color-accept-text: #10532c;
+
+  --color-review-bg: #fff3e0;
+  --color-review-border: #b5690a;
+  --color-review-text: #7a4306;
+
+  --color-manual-bg: #fde8e8;
+  --color-manual-border: #c23030;
+  --color-manual-text: #7f1d1d;
+
+  --shadow-card: 0 1px 2px rgba(20, 30, 40, 0.06), 0 2px 8px rgba(20, 30, 40, 0.06);
+  --radius: 10px;
+  --font-sans: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #11161d;
+    --color-surface: #1a212b;
+    --color-surface-alt: #212a36;
+    --color-border: #313c4a;
+    --color-text: #e7ecf2;
+    --color-text-muted: #a4afbd;
+    --color-accent: #5db0ff;
+    --color-accent-contrast: #0b1520;
+    --color-focus: #5db0ff;
+
+    --color-accept-bg: #103321;
+    --color-accept-border: #2fa968;
+    --color-accept-text: #8fe3b4;
+
+    --color-review-bg: #3a2a0d;
+    --color-review-border: #d9881f;
+    --color-review-text: #f3c283;
+
+    --color-manual-bg: #3a1414;
+    --color-manual-border: #e05a5a;
+    --color-manual-text: #f5b4b4;
+
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 10px rgba(0, 0, 0, 0.35);
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #11161d;
+  --color-surface: #1a212b;
+  --color-surface-alt: #212a36;
+  --color-border: #313c4a;
+  --color-text: #e7ecf2;
+  --color-text-muted: #a4afbd;
+  --color-accent: #5db0ff;
+  --color-accent-contrast: #0b1520;
+  --color-focus: #5db0ff;
+
+  --color-accept-bg: #103321;
+  --color-accept-border: #2fa968;
+  --color-accept-text: #8fe3b4;
+
+  --color-review-bg: #3a2a0d;
+  --color-review-border: #d9881f;
+  --color-review-text: #f3c283;
+
+  --color-manual-bg: #3a1414;
+  --color-manual-border: #e05a5a;
+  --color-manual-text: #f5b4b4;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 8px 14px;
+  border-radius: 0 0 6px 0;
+  z-index: 100;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- header */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.app-header .brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.app-header .brand .subtitle {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.app-nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.app-nav a {
+  text-decoration: none;
+  color: var(--color-text-muted);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.app-nav a:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+}
+
+.app-nav a[aria-current="page"] {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.theme-toggle:hover {
+  border-color: var(--color-accent);
+}
+
+/* ---------------------------------------------------------------- layout */
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.page-title {
+  margin: 0 0 4px;
+  font-size: 1.4rem;
+}
+
+.page-subtitle {
+  margin: 0 0 20px;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 20px;
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+/* ---------------------------------------------------------------- forms */
+
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.88rem;
+  margin-bottom: 6px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field .hint {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+select, input[type="number"], input[type="text"] {
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.95rem;
+}
+
+button {
+  font-family: inherit;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  border: none;
+  border-radius: 8px;
+  padding: 11px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.app-footer {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  padding: 24px 20px 40px;
+}
+
+/* ---------------------------------------------------------------- utility */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  main {
+    padding: 14px;
+  }
+}
+
+/* ---------------------------------------------------------------- status / banners (shared) */
+
+.status-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  min-height: 1.4em;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-banner {
+  background: var(--color-manual-bg);
+  border: 1px solid var(--color-manual-border);
+  color: var(--color-manual-text);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  font-size: 0.9rem;
+}
+
+.warning-banner {
+  background: var(--color-review-bg);
+  border: 1px solid var(--color-review-border);
+  color: var(--color-review-text);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  font-size: 0.9rem;
+}

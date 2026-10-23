@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend: FastAPI (uvicorn)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["app.main:app", "--reload", "--port", "8000"],
+      "cwd": "${workspaceFolder}/webapp/backend",
+      "justMyCode": true
+    },
+    {
+      "name": "Backend: run all tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["tests/", "-v"],
+      "cwd": "${workspaceFolder}/webapp/backend",
+      "justMyCode": true
+    },
+    {
+      "name": "Script: make_ensemble_confusion_matrix",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/webapp/backend/scripts/make_ensemble_confusion_matrix.py",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true
+    }
+  ]
+}

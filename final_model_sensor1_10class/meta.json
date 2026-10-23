@@ -1,0 +1,54 @@
+{
+  "description": "sensor_1, 10 shared classes; equal-weight ensemble of prototypical network and ResNet-18",
+  "sensor": "1",
+  "classes": [
+    "fault_2",
+    "fault_4",
+    "fault_5",
+    "fault_6",
+    "fault_7",
+    "fault_8",
+    "fault_9",
+    "fault_10",
+    "fault_12",
+    "fault_13"
+  ],
+  "resnet_num_classes": 11,
+  "resnet_keep_idx": [
+    0,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "ensemble_weights": {
+    "prototypical": 0.5,
+    "resnet18": 0.5
+  },
+  "prototype_draws": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "n_shot": 5,
+  "expected_image_size": [
+    1800,
+    1050
+  ],
+  "reported_test_results": {
+    "accuracy": 0.6019,
+    "macro_f1": 0.4157,
+    "source": "stage2_output/sensor_comparison_10class.csv"
+  },
+  "source_checkpoints": {
+    "prototypical": "stage2_output\\prototypical_sensor_1\\siamese_best.pt",
+    "resnet18": "stage2_output\\resnet_sensor_1\\resnet_best.pt"
+  }
+}
