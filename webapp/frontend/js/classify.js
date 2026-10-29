@@ -151,6 +151,12 @@
     return { icon: "?", cls: "tier-manual" };
   }
 
+  function faultTitle(code) {
+    if (!window.PrpdLibrary) return null;
+    var entry = window.PrpdLibrary.find(function (f) { return f.code === code; });
+    return entry ? entry.title : null;
+  }
+
   function confidenceExplainer(tier, confidence) {
     // Wording and figures taken only from the thesis's calibration results
     // (chapters/09_calibration.tex; stage2_output/calibration_operating_points_sensor_2.csv).
@@ -242,6 +248,14 @@
     header.appendChild(faultName);
     header.appendChild(badge);
     resultsContent.appendChild(header);
+
+    var title = faultTitle(result.fault);
+    if (title) {
+      var titleEl = document.createElement("p");
+      titleEl.className = "result-fault-title";
+      titleEl.textContent = title;
+      resultsContent.appendChild(titleEl);
+    }
 
     var explainer = document.createElement("p");
     explainer.className = "confidence-explainer";
@@ -397,6 +411,16 @@
     final.appendChild(document.createTextNode("Final: "));
     final.appendChild(strong);
     box.appendChild(final);
+
+    var finalTitle = faultTitle(result.final_fault);
+    if (finalTitle) {
+      var finalTitleEl = document.createElement("div");
+      finalTitleEl.style.marginTop = "2px";
+      finalTitleEl.style.color = "var(--color-text-muted)";
+      finalTitleEl.style.fontSize = "0.88rem";
+      finalTitleEl.textContent = finalTitle;
+      box.appendChild(finalTitleEl);
+    }
 
     var action = document.createElement("div");
     action.style.marginTop = "6px";
